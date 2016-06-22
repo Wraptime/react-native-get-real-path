@@ -96,7 +96,7 @@ RNGRP.getRealPathFromURI(fileUri).then(filePath =>
     https://github.com/johanneslumpe/react-native-fs
 
 ```javascript
-RNGRP.getRealPathFromURI(this.props.share.image).then(path =>
+RNGRP.getRealPathFromURI(imageUri).then(path =>
   RNFS.readFile(path, 'base64').then(imageBase64 =>
     console.log(imageBase64)
   )

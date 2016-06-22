@@ -90,4 +90,16 @@ RNGRP.getRealPathFromURI(fileUri).then(filePath =>
 )
 ```
 
+## Use Case - get images from CameraRoll as base64
+
+  * Required: react-native-fs
+    https://github.com/johanneslumpe/react-native-fs
+
+```javascript
+RNGRP.getRealPathFromURI(imageUri).then(path =>
+  RNFS.readFile(path, 'base64').then(imageBase64 =>
+    console.log(imageBase64)
+  )
+)
+```
 
