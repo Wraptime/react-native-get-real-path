@@ -88,7 +88,7 @@ public class MainActivity extends ReactActivity {
 var RNGRP = require('react-native-get-real-path');
 
 RNGRP.getRealPathFromURI(fileUri).then(filePath =>
-  console.log(path)
+  console.log(filePath)
 )
 ```
 
