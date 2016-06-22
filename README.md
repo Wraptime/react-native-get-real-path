@@ -8,6 +8,10 @@ Currently No Support
 
 ## Installation (Android)
 
+```javascript
+npm i react-native-get-real-path@https://github.com/Wraptime/react-native-get-real-path.git --save
+```
+
 Make alterations to the following files:
 
 * `android/settings.gradle`
@@ -102,4 +106,6 @@ RNGRP.getRealPathFromURI(imageUri).then(path =>
   )
 )
 ```
+
+  * For iOS you can checkout: https://github.com/scottdixon/react-native-upload-from-camera-roll/
 
