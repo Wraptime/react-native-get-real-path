@@ -22,7 +22,7 @@ public class GRP extends ReactContextBaseJavaModule {
 
   @Override
   public String getName() {
-    return "RNGRP";
+    return "GRP";
   }
 
   private WritableMap makeErrorPayload(Exception ex) {
