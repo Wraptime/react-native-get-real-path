@@ -2,7 +2,7 @@
   "name": "react-native-get-real-path",
   "version": "1.0.0",
   "description": "Get real file path from uri",
-  "main": "GRP.common.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
