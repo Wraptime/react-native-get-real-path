@@ -66,7 +66,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
 
   * For react-native 0.19.0 and higher
 ```java
-import com.rnfs.RNGRPPackage; // <------- add package
+import com.rngrp.RNGRPPackage; // <------- add package
 
 public class MainActivity extends ReactActivity {
    // ...
@@ -90,4 +90,16 @@ RNGRP.getRealPathFromURI(fileUri).then(filePath =>
 )
 ```
 
+## Use Case - get images from CameraRoll as base64
+
+  * Required: react-native-fs
+    https://github.com/johanneslumpe/react-native-fs
+
+```javascript
+RNGRP.getRealPathFromURI(this.props.share.image).then(path =>
+  RNFS.readFile(path, 'base64').then(imageBase64 =>
+    console.log(imageBase64)
+  )
+)
+```
 
