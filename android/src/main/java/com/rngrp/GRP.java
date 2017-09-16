@@ -3,6 +3,7 @@ package com.rngrp;
 import android.content.ContentUris;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -39,40 +40,46 @@ public class GRP extends ReactContextBaseJavaModule {
     Uri uri = Uri.parse(uriString);
     try {
       Context context = getReactApplicationContext();
+      final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+      if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if (isMediaDocument(uri)) {
+          String[] proj = {MediaStore.Images.Media.DATA};
+          Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
+          int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+          cursor.moveToFirst();
+          String path = cursor.getString(column_index);
+          cursor.close();
 
-      if (isMediaDocument(uri)){
-      String [] proj = {MediaStore.Images.Media.DATA};
-      Cursor cursor = context.getContentResolver().query(uri, proj,  null, null, null);
-      int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-      cursor.moveToFirst();
-      String path = cursor.getString(column_index);
-      cursor.close();
+          callback.invoke(null, path);
+        } else if (isDownloadsDocument(uri)) {
 
-      callback.invoke(null, path);
-      }
-      else if (isDownloadsDocument(uri)) {
+          final String id = DocumentsContract.getDocumentId(uri);
+          final Uri contentUri = ContentUris.withAppendedId(
+                  Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
 
-        final String id = DocumentsContract.getDocumentId(uri);
-        final Uri contentUri = ContentUris.withAppendedId(
-                Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+          callback.invoke(null, getDataColumn(context, contentUri, null, null));
+          ;
+        } else if (isExternalStorageDocument(uri)) {
+          final String docId = DocumentsContract.getDocumentId(uri);
+          final String[] split = docId.split(":");
+          final String type = split[0];
 
-        callback.invoke(null, getDataColumn(context, contentUri, null, null)); ;
-      }
-      else if (isExternalStorageDocument(uri)) {
-        final String docId = DocumentsContract.getDocumentId(uri);
-        final String[] split = docId.split(":");
-        final String type = split[0];
-
-        if ("primary".equalsIgnoreCase(type)) {
-          callback.invoke(null, Environment.getExternalStorageDirectory() + "/" + split[1]);
+          if ("primary".equalsIgnoreCase(type)) {
+            callback.invoke(null, Environment.getExternalStorageDirectory() + "/" + split[1]);
+          }
+          // TODO handle non-primary volumes
         }
-        // TODO handle non-primary volumes
+      }
+      else if ("content".equalsIgnoreCase(uri.getScheme())) {
+        callback.invoke(null,getDataColumn(context, uri, null, null));
+      }
+      else if ("file".equalsIgnoreCase(uri.getScheme())) {
+        callback.invoke(null, uri.getPath());
       }
     } catch (Exception ex) {
       ex.printStackTrace();
       callback.invoke(makeErrorPayload(ex));
     }
-
   }
 
   public static boolean isMediaDocument(Uri uri) {
