@@ -11,7 +11,7 @@ var GRP = require('react-native').NativeModules.GRP;
 var NativeAppEventEmitter = require('react-native').NativeAppEventEmitter;
 var Promise = require('bluebird');
 
-var _getRealPathFromURI = Promise.promisify(GRP.getRealPathFromURI);
+var _getRealPathFromURI = Promise.promisify(GRP ? GRP.getRealPathFromURI : (fileUri) => { return fileUri; });
 
 var convertError = (err) => {
   if (err.isOperational && err.cause) {
