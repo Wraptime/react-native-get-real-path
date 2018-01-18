@@ -43,14 +43,24 @@ public class GRP extends ReactContextBaseJavaModule {
       final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
       if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
         if (isMediaDocument(uri)) {
-          String[] proj = {MediaStore.Images.Media.DATA};
-          Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
-          int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-          cursor.moveToFirst();
-          String path = cursor.getString(column_index);
-          cursor.close();
+          // http://www.banbaise.com/archives/745
+          final String docId = DocumentsContract.getDocumentId(uri);
+          final String[] split = docId.split(":");
+          final String type = split[0];
 
-          callback.invoke(null, path);
+          Uri contentUri = null;
+          if ("image".equals(type)) {
+              contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+          } else if ("video".equals(type)) {
+              contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+          } else if ("audio".equals(type)) {
+              contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+          }
+
+          final String selection = "_id=?";
+          final String[] selectionArgs = new String[] { split[1] };
+
+          callback.invoke(null, getDataColumn(context, contentUri, selection, selectionArgs));
         } else if (isDownloadsDocument(uri)) {
 
           final String id = DocumentsContract.getDocumentId(uri);
@@ -66,8 +76,16 @@ public class GRP extends ReactContextBaseJavaModule {
 
           if ("primary".equalsIgnoreCase(type)) {
             callback.invoke(null, Environment.getExternalStorageDirectory() + "/" + split[1]);
+          } else {
+            String[] proj = {MediaStore.Images.Media.DATA};
+            Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String path = cursor.getString(column_index);
+            cursor.close();
+
+            callback.invoke(null, path);
           }
-          // TODO handle non-primary volumes
         }
       }
       else if ("content".equalsIgnoreCase(uri.getScheme())) {
