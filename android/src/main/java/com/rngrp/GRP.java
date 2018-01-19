@@ -1,5 +1,12 @@
 package com.rngrp;
 
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
+import java.io.File;
+
 import android.content.ContentUris;
 import android.content.Context;
 import android.net.Uri;
@@ -112,19 +119,65 @@ public class GRP extends ReactContextBaseJavaModule {
   }
   public static String getDataColumn(Context context, Uri uri, String selection,
                                      String[] selectionArgs) {
-
+    // https://github.com/hiddentao/cordova-plugin-filepath/pull/6
     Cursor cursor = null;
     final String column = "_data";
-    final String[] projection = {
-            column
-    };
+    final String[] projection = {column, "_display_name"};
 
     try {
-      cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-              null);
+      /* get `_data` */
+      cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
       if (cursor != null && cursor.moveToFirst()) {
         final int column_index = cursor.getColumnIndexOrThrow(column);
-        return cursor.getString(column_index);
+        /* bingo! */
+        final String filepath = cursor.getString(column_index);
+        return filepath;
+      }
+    } catch (Exception e) {
+      final int column_index = cursor.getColumnIndexOrThrow("_display_name");
+      final String displayName = cursor.getString(column_index);
+
+      InputStream input = null;
+      try {
+        input = context.getContentResolver().openInputStream(uri);
+        /* save stream to temp file */
+        try {
+          File file = new File(context.getCacheDir(), displayName);
+          OutputStream output = new FileOutputStream(file);
+          try {
+            byte[] buffer = new byte[4 * 1024]; // or other buffer size
+            int read;
+
+            while ((read = input.read(buffer)) != -1) {
+              output.write(buffer, 0, read);
+            }
+            output.flush();
+
+            final String outputPath = file.getAbsolutePath();
+            return outputPath;
+              
+          } finally {
+            output.close();
+          }
+        } catch (Exception e1a) {
+          //
+        } finally {
+          try {
+            input.close();
+          } catch (IOException e1b) {
+            //
+          }
+        }
+      } catch (FileNotFoundException e2) {
+        //
+      } finally {
+        if (input != null) {
+          try {
+            input.close();
+          } catch (IOException e3) {
+            //
+          }
+        }
       }
     } finally {
       if (cursor != null)
