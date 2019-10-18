@@ -169,7 +169,7 @@ public class GRP extends ReactContextBaseJavaModule {
       /* get `_data` */
       cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
       if (cursor != null && cursor.moveToFirst()) {
-        final int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
         /* bingo! */
         final String filepath = cursor.getString(column_index);
 
