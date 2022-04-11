@@ -22,7 +22,7 @@
   "author": "Anton Dobrovolskyy <anton@wraptime.io> (https://github.com/anton6)",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "^2.9.25"
+
   },
   "devDependencies": {
     "react-native": "*"
