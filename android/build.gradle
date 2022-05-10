@@ -1,20 +1,22 @@
 buildscript {
     repositories {
-        jcenter()
+        google()
+        mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.+'
+        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath 'com.google.gms:google-services:4.3.3'
     }
 }
 
 apply plugin: 'com.android.library'
 
 def _ext = rootProject.ext;
-def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 26;
-def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '26.0.3';
-def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 16;
-def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 26;
+def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 30;
+def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '30.0.2';
+def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 24;
+def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 30;
 
 android {
     compileSdkVersion _compileSdkVersion
@@ -32,5 +34,6 @@ android {
 }
 
 dependencies {
-    compile 'com.facebook.react:react-native:+'
+    implementation 'com.facebook.react:react-native:+'
 }
+
