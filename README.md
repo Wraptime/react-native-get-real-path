@@ -26,7 +26,7 @@ project(':react-native-get-real-path').projectDir = new File(settingsDir, '../no
 ...
 dependencies {
     ...
-    compile project(':react-native-get-real-path')
+    implementation project(':react-native-get-real-path')
 }
 ```
 
